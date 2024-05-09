@@ -5,7 +5,7 @@ from torch import nn
 from torchsummary import summary
 
 class TestConvModel(nn.Module):
-    def __init__(self, input_channels=343, num_labels=1, hidden_dims=[256,512], filter_length=[3,5], num_filters=[4,16],
+    def __init__(self, input_channels=343, num_labels=2, hidden_dims=[256,512], filter_length=[3,5], num_filters=[4,16],
                  pool_length = 4, n = 1, mag = 2):
         super(TestConvModel, self).__init__()
 
@@ -31,7 +31,7 @@ class TestConvModel(nn.Module):
         x1 = self.fc2(self.fc1(torch.flatten(self.net(x1), 1)))
         
         out = torch.cat((x0, x1), 1)
-        out = F.relu(self.output(out))
+        out = F.sigmoid(self.output(out))
         
         return out
     
