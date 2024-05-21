@@ -2,3 +2,6 @@
 __pycache__
 data
 __init__.py
+logs
+results
+utils
