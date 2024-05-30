@@ -3,5 +3,7 @@ __pycache__
 data
 __init__.py
 logs
+.log
 results
 utils
+test

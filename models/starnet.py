@@ -31,11 +31,8 @@ class StarNet(nn.Module):
         x = torch.flatten(x, 1)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-
-        if self.num_labels == 1:
-            x = F.sigmoid(self.output(x))
-        else:
-            x = self.output(x)
+        x = self.output(x)
+        
         return x
     
     def compute_out_size(self, in_size, mod):
