@@ -31760,3 +31760,11 @@ ValueError: Input contains NaN.
 2024-05-21 18:24:47,504:INFO:[LightGBM] [Info] Number of data points in the train set: 8883, number of used features: 272
 2024-05-21 18:24:47,506:INFO:[LightGBM] [Info] [binary:BoostFromScore]: pavg=0.374536 -> initscore=-0.512807
 2024-05-21 18:24:47,506:INFO:[LightGBM] [Info] Start training from score -0.512807
+2024-06-06 14:50:18,069:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2024-06-06 14:50:18,070:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2024-06-06 14:50:18,070:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
+2024-06-06 14:50:18,070:WARNING:
+'cuml' is a soft dependency and not included in the pycaret installation. Please run: `pip install cuml` to install.
