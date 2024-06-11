@@ -6,5 +6,4 @@ data
 __init__.py
 logs
 results
-utils
 test
