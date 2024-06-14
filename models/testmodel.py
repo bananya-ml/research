@@ -61,5 +61,4 @@ class TestConvModel(nn.Module):
         """
         
         f = mod.forward(autograd.Variable(torch.Tensor(1, *in_size)))
-        print(f.size())
         return f.size()[1:]
