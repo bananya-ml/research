@@ -9,7 +9,9 @@ class TestConvModel(nn.Module):
         super(TestConvModel, self).__init__()
         
         # spectrum convolutional input
-        self.conv1 = nn.Conv1d(in_channels=1, out_channels=16, kernel_size=3, padding=1)
+        self.conv1 = nn.Conv1d(in_channels=1, out_channels=4, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv1d(in_channels=4, out_channels=16, kernel_size=5, padding=1)
+        self.conv3 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=8, padding=1)
         self.pool = nn.MaxPool1d(kernel_size=2)
         
         pool_output_shape = self._compute_out_size((1,input_channels), 
@@ -37,6 +39,8 @@ class TestConvModel(nn.Module):
 
         # forward pass for spectrum
         x = self.pool(F.leaky_relu(self.conv1(x)))
+        x = self.pool(F.leaky_relu(self.conv2(x)))
+        x = self.pool(F.leaky_relu(self.conv3(x)))
         x = x.view(x.size(0), -1)
         x = F.leaky_relu(self.fc01(x))
         x = F.leaky_relu(self.fc02(x))
