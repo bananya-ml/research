@@ -4,57 +4,48 @@ import torch
 import torch.autograd as autograd
 from torchsummary import summary
 
-class TestConvModel(nn.Module):
-    def __init__(self, input_channels):
-        super(TestConvModel, self).__init__()
+class CNNWithAttention(nn.Module):
+    def __init__(self):
+        super(CNNWithAttention, self).__init__()
         
-        # spectrum convolutional input
-        self.conv1 = nn.Conv1d(in_channels=1, out_channels=16, kernel_size=3, padding=1)
-        self.pool = nn.MaxPool1d(kernel_size=2)
-        
-        pool_output_shape = self._compute_out_size((1,input_channels), 
-                                             nn.Sequential(self.conv1, 
-                                                           self.pool,
-                                                           self.conv2,
-                                                           self.pool,
-                                                           self.conv3,
-                                                           self.pool))
+        self.conv1 = nn.Conv1d(1, 4, kernel_size=3, padding=1)
+        self.norm = nn.LayerNorm(4)
+        self.mha = nn.MultiheadAttention(4, num_heads=2)
+        self.scale = nn.Parameter(torch.zeros(1))
+        self.conv2 = nn.Conv1d(4, 16, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv1d(16, 64, kernel_size=3, padding=1)
+        #self.conv4 = nn.Conv1d(64, 128, kernel_size=3, padding=1)
+        self.maxpool = nn.MaxPool1d(kernel_size=2)
 
-        self.fc01 = nn.Linear(pool_output_shape[0]*pool_output_shape[1], 128)
-        self.fc02 = nn.Linear(128, 64)
-        
-        # context input
-        self.fc11 = nn.Linear(2, 16)
-        self.ln1 = nn.LayerNorm(16)
-        self.fc12 = nn.Linear(16, 32)
-        
-        # combine outputs
-        self.fc = nn.Linear(64+32, 64)
-        self.output = nn.Linear(64, 1)
+        self.fc1 = nn.Linear(64 * (343//4), 128) 
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 1)
 
-
-    def forward(self, x, y):
-
-        # forward pass for spectrum
-        x = self.pool(F.leaky_relu(self.conv1(x)))
-        x = x.view(x.size(0), -1)
-        x = F.leaky_relu(self.fc01(x))
-        x = F.leaky_relu(self.fc02(x))
+    def use_attention(self, x):
         
-        # forward pass for context
-        y = self.ln1(F.leaky_relu(self.fc11(y)))
-        y = F.leaky_relu(self.fc12(y))
-
-        out = torch.cat((x, y), 1)
-        out = F.leaky_relu(self.fc(out))
-        out = self.output(out)
+        bs, c, l = x.shape
+        x_att = x.transpose(1, 2)
         
-        return out
+        x_att = self.norm(x_att)
+        
+        att_out, att_map = self.mha(x_att, x_att, x_att)
+        
+        return att_out.transpose(1, 2), att_map  # BSxCxL
     
-    def _compute_out_size(self, in_size, mod):
-        """
-        Compute output size of Module `mod` given an input with size `in_size`.
-        """
+    def forward(self, x):
+        x = self.conv1(x)
         
-        f = mod.forward(autograd.Variable(torch.Tensor(1, *in_size)))
-        return f.size()[1:]
+        x = self.scale * self.use_attention(x)[0] + x
+        #x, _ = self.mha(x, x, x)
+        x = F.leaky_relu(x)
+        print(x.size())
+
+        x = self.maxpool(F.leaky_relu(self.conv2(x)))
+        x = self.maxpool(F.leaky_relu(self.conv3(x)))
+        
+        x = x.view(x.size(0), -1)
+        x = F.leaky_relu(self.fc1(x))
+        x = F.leaky_relu(self.fc2(x))
+        out = F.leaky_relu(self.fc3(x))
+    
+        return out
