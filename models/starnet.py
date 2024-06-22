@@ -8,7 +8,6 @@ class StarNet(nn.Module):
                  pool_length, num_hidden, num_labels):
         super().__init__()
         
-        self.num_labels = num_labels
         # Convolutional and pooling layers
         self.conv1 = nn.Conv1d(1, num_filters[0], filter_length)
         self.conv2 = nn.Conv1d(num_filters[0], num_filters[1], filter_length)

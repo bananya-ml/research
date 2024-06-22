@@ -4,14 +4,14 @@ import torch
 import torch.autograd as autograd
 from torchsummary import summary
 
-class TestConvModel(nn.Module):
+class StellarNet(nn.Module):
     def __init__(self, input_channels):
-        super(TestConvModel, self).__init__()
+        super(StellarNet, self).__init__()
         
         # spectrum convolutional input
-        self.conv1 = nn.Conv1d(in_channels=1, out_channels=4, kernel_size=3, padding=1)
-        self.conv2 = nn.Conv1d(in_channels=4, out_channels=16, kernel_size=5, padding=1)
-        self.conv3 = nn.Conv1d(in_channels=16, out_channels=32, kernel_size=8, padding=1)
+        self.conv1 = nn.Conv1d(in_channels=1, out_channels=64, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv1d(in_channels=64, out_channels=128, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv1d(in_channels=128, out_channels=256, kernel_size=3, padding=1)
         self.pool = nn.MaxPool1d(kernel_size=2)
         
         pool_output_shape = self._compute_out_size((1,input_channels), 
