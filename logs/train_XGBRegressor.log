@@ -1,0 +1,1 @@
+2024-05-22T18:34:50.912632+0530 - INFO - Cross-validation technique:KFold,                Number of splits:5,                Time taken:1294.7455422878265,                MSE:[0.015175867, 0.012978886, 0.014031355, 0.014668754, 0.013670755],                Mean MSE:0.014105123467743397

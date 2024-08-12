@@ -4,6 +4,5 @@
 __pycache__
 data
 __init__.py
-logs
-results
+temp
 test
