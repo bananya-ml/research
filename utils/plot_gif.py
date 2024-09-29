@@ -25,14 +25,14 @@ def _convert_to_cartesian(coords, coord_type):
     
     return list(x), list(y), list(z)
 
-def create_gif(coords, coord_type='cartesian', labels=None, num_frames=36, output_file='scatter_plot.gif', duration=None):
+def create_gif(coords, predictions, coord_type='cartesian', num_frames=36, output_file='scatter_plot.gif', duration=None):
     """
     Creates an animated GIF of a rotating 3D scatter plot for the given coordinates.
     
     Parameters:
     - coords: List of tuples/lists containing the coordinates.
+    - predictions: List of prediction values corresponding to the points.
     - coord_type: Type of coordinates ('cartesian', 'ra_dec', 'spherical').
-    - labels: Optional list of labels for the points.
     - num_frames: Number of frames for the rotation animation.
     - output_file: Name of the output GIF file.
     """
@@ -41,6 +41,9 @@ def create_gif(coords, coord_type='cartesian', labels=None, num_frames=36, outpu
     frames = []
     temp_dir = 'temp_frames'
     os.makedirs(temp_dir, exist_ok=True)
+    
+    # Map predictions to colors (0: blue, 1: red)
+    colors = ['blue' if pred == 0.0 else 'red' for pred in predictions]
     
     for i in range(num_frames):
         angle = 360 * i / num_frames
@@ -51,12 +54,10 @@ def create_gif(coords, coord_type='cartesian', labels=None, num_frames=36, outpu
             mode='markers',
             marker=dict(
                 size=5,
-                color=z,                # Color by z coordinate
-                colorscale='Viridis',   # Choose a colorscale
+                color=colors,
                 opacity=0.8
             ),
-            text=labels,  # Use text for labels if provided
-            hoverinfo='text'
+            hoverinfo='none'
         )])
         
         fig.update_layout(
@@ -81,14 +82,15 @@ def create_gif(coords, coord_type='cartesian', labels=None, num_frames=36, outpu
         os.remove(os.path.join(temp_dir, frame_file))
     os.rmdir(temp_dir)
 
+
 # Example usage
 
 ra_dec_coords = [(0, 0), (45, 45), (90, 0), (135, -45), (180, 0)]
 #cartesian_coords = [(1, 10, 20), (2, 11, 21), (3, 12, 22), (4, 13, 23), (5, 14, 24)]
 #spherical_coords = [(1, 0, 0), (1, 45, 45), (1, 90, 90), (1, 135, 135), (1, 180, 180)]
 
-point_labels = ['Point 1', 'Point 2', 'Point 3', 'Point 4', 'Point 5']
+#point_labels = ['Point 1', 'Point 2', 'Point 3', 'Point 4', 'Point 5']
 
-create_gif(ra_dec_coords, 'ra_dec', point_labels, output_file='plot.gif', num_frames=50)
-#create_rotating_3d_scatter_gif(cartesian_coords, 'cartesian', point_labels)
-#create_rotating_3d_scatter_gif(spherical_coords, 'spherical', point_labels, output_file='spherical_scatter_plot.gif')
+#create_gif(ra_dec_coords, 'ra_dec', point_labels, output_file='plot.gif', num_frames=50)
+#create_gif(cartesian_coords, 'cartesian', point_labels)
+#create_gif(spherical_coords, 'spherical', point_labels, output_file='spherical_scatter_plot.gif')
