@@ -1,9 +1,28 @@
+# virtual env
 .venv
+
+# log files
 .log
+
+# model files
 .pth
+
+# data files
+*.csv
+*.parquet
+*.txt
+*.h5
+*.npy
+*.vot
+*.dat
+*.tsv
+*.fit
+*.fits
+*.pdf
+*.json
+
+# misc files and folders
 __pycache__
-data
 __init__.py
-results
 temp
 test
